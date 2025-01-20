@@ -146,3 +146,53 @@ async def generate_audio(
     except Exception as e:
         logger.error(f"Error al generar el audio: {e}")
         raise HTTPException(status_code=500, detail=f"Error al generar el audio: {e}")
+
+
+@app.post("/generate-audio-with-ref-audio/")
+async def generate_audio_with_local_ref_audio(
+    gen_text: str = "",
+    remove_silence: bool = False,
+    cross_fade_duration: float = 0.15,
+    speed: float = 1.0
+):
+    """
+    Genera audio utilizando un archivo de referencia local y un texto de generación.
+    """
+    start_time = time.time()  # Iniciar el temporizador
+    try:
+        # Ruta del archivo de referencia local
+        ref_audio_path = "./tts_voice_files/final.wav"
+        ref_text = "Muchas gracias. Su hora de atención en dermatología quedó confirmada para el día 10 de junio de 2024 en horario de las 15 horas. Favor presentarse con 10 a 15 minutos de anticipación. Que tenga una buena tarde."  # Texto de referencia fijo
+
+        # Validar que el archivo de referencia exista
+        if not os.path.exists(ref_audio_path):
+            raise HTTPException(status_code=404, detail="El archivo de audio de referencia no existe.")
+        
+        # Validación del texto de generación
+        if not gen_text:
+            raise HTTPException(status_code=400, detail="El texto de generación es obligatorio.")
+        
+        # Realizar la inferencia
+        logger.info("Iniciando la inferencia de audio...")
+        final_wave, final_sample_rate, _ = infer(
+            ref_audio_path, ref_text, gen_text, remove_silence, cross_fade_duration, speed
+        )
+
+        # Ruta de salida para el audio generado
+        output_dir = "/app/generated_audio_files"
+        os.makedirs(output_dir, exist_ok=True)
+        generated_audio_path = os.path.join(output_dir, "generated_audio.wav")
+        sf.write(generated_audio_path, final_wave, final_sample_rate)
+
+        execution_time = time.time() - start_time  # Calcular el tiempo total
+        logger.info(f"Tiempo total de ejecución: {execution_time:.2f} segundos")
+
+        return FileResponse(
+            path=generated_audio_path,
+            filename="generated_audio.wav",
+            media_type="audio/wav"
+        )
+
+    except Exception as e:
+        logger.error(f"Error al generar el audio: {e}")
+        raise HTTPException(status_code=500, detail=f"Error al generar el audio: {e}")
