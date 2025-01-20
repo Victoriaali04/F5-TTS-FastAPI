@@ -21,7 +21,7 @@ RUN git clone https://github.com/jpgallegoar/Spanish-F5.git /tmp/Spanish-F5 && \
 COPY . /app
 
 # Instalar las dependencias de Python
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir --timeout=100 -r requirements.txt
 
 # Instalar el paquete de F5 si es necesario
 #RUN pip install git+https://github.com/jpgallegoar/Spanish-F5.git
