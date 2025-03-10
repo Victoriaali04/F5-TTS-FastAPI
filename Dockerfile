@@ -26,8 +26,8 @@ RUN pip install --no-cache-dir --timeout=100 -r requirements.txt
 # Exponer el puerto para FastAPI
 EXPOSE 8080
 
-# Establecer la variable de entorno PORT
+# Establecer la variable de entorno PORT (por defecto 8080)
 ENV PORT=8080
 
-# Comando para iniciar FastAPI con soporte CUDA
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8080"]
+# Comando para iniciar FastAPI usando la variable de entorno PORT
+CMD ["sh", "-c", "uvicorn main:app --host 0.0.0.0 --port ${PORT}"]
