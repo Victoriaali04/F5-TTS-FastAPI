@@ -23,11 +23,11 @@ COPY . /app
 # Instalar las dependencias de Python
 RUN pip install --no-cache-dir --timeout=100 -r requirements.txt
 
-# Instalar el paquete de F5 si es necesario
-#RUN pip install git+https://github.com/jpgallegoar/Spanish-F5.git
-
 # Exponer el puerto para FastAPI
 EXPOSE 8080
+
+# Establecer la variable de entorno PORT
+ENV PORT=8080
 
 # Comando para iniciar FastAPI con soporte CUDA
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8080"]
