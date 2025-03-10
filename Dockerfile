@@ -27,7 +27,7 @@ RUN pip install --no-cache-dir --timeout=100 -r requirements.txt
 #RUN pip install git+https://github.com/jpgallegoar/Spanish-F5.git
 
 # Exponer el puerto para FastAPI
-EXPOSE 8000
+EXPOSE 8080
 
 # Comando para iniciar FastAPI con soporte CUDA
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8080"]
